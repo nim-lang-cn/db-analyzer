@@ -113,7 +113,7 @@ XML 配置文件主要由以下几个部件组成：
   </schemas>
 
   <tables>
-    <table count="100000" name="users" description="insert into users">
+    <table count="10000" name="users" description="insert into users">
       <query>
         INSERT INTO users (
           username, 
