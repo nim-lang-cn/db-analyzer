@@ -48,6 +48,8 @@ DBAnalyzer 帮助自动化你的数据库基准测试过程，为你生成具有
 
 3. 运行程序，读取 2 生成的 csv 文件，生成 png 图片
 
+   ![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
+
 XML 配置
 ---------
 
@@ -56,4 +58,3 @@ XML 配置
 - indexes 创建数据表索引的一组 SQL 语句
 - actions 用于分析的一组查询 SQL 语句，比如 `EXPLAIN ANALYZE SELECT * FROM users WHERE username = 'username100'`
 
-![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
