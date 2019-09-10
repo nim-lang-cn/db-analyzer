@@ -54,15 +54,15 @@ DBAnalyzer 帮助自动化数据库的基准测试过程，生成具有表现力
              inserted rows 8000, cost 2840ms
              inserted rows 9000, cost 3077ms
              inserted rows 10000, cost 3305ms 
-    (action) account.username.username-1 <non-index> ...
-    (action) account.username.username-1-limit <non-index> ...
-    (action) account.username.username-10000 <non-index> ...
-    (action) account.username.username-10000-limit <non-index> ...
-    (index)  CREATE UNIQUE INDEX index_users_on_username on account.users (username)
-    (action) account.username.username-1 <index> ...
-    (action) account.username.username-1-limit <index> ...
-    (action) account.username.username-10000 <index> ...
-    (action) account.username.username-10000-limit <index> ...
+    (action) users.username.username-1 <non-index> ...
+    (action) users.username.username-1-limit <non-index> ...
+    (action) users.username.username-10000 <non-index> ...
+    (action) users.username.username-10000-limit <non-index> ...
+    (index)  CREATE UNIQUE INDEX index_users_on_username on users (username)
+    (action) users.username.username-1 <index> ...
+    (action) users.username.username-1-limit <index> ...
+    (action) users.username.username-10000 <index> ...
+    (action) users.username.username-10000-limit <index> ...
     Completed analysis.
     ```
 
@@ -79,9 +79,9 @@ parseXMLFile()
 
 prepareSchemas()
 prepareTables()
-analyze(false)
+analyze(indexed = false)
 prepareIndexes()
-analyze(true)
+analyze(indexed = true)
 
 execChartPlotter()
 ```
@@ -113,7 +113,7 @@ XML 配置文件主要由以下几个部件组成：
   </schemas>
 
   <tables>
-    <table count="100000" name="users" description="insert into users">
+    <table count="10000" name="users" description="insert into users">
       <query>
         INSERT INTO users (
           username, 
@@ -130,32 +130,32 @@ XML 配置文件主要由以下几个部件组成：
 
   <indexes>
     <index>
-      CREATE UNIQUE INDEX index_users_on_username on account.users (username)
+      CREATE UNIQUE INDEX index_users_on_username on users (username)
     </index>
   </indexes>
 
   <actions name="username">
     <action name="username-1" description="Analyze username 1">
       <query>
-        SELECT * FROM account.users WHERE username = 'username_1'
+        SELECT * FROM users WHERE username = 'username_1'
       </query>
     </action>
 
     <action name="username-1-limit" description="Analyze username 1 limit 1">
       <query>
-        SELECT * FROM account.users WHERE username = 'username_1' LIMIT 1
+        SELECT * FROM users WHERE username = 'username_1' LIMIT 1
       </query>
     </action>
 
     <action name="username-10000" description="Analyze username 10000">
       <query>
-        SELECT * FROM account.users WHERE username = 'username_10000'
+        SELECT * FROM users WHERE username = 'username_10000'
       </query>
     </action>
 
     <action name="username-10000-limit" description="Analyze username 10000 limit 1">
       <query>
-        SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1
+        SELECT * FROM users WHERE username = 'username_10000' LIMIT 1
       </query>
     </action>
   </actions>
@@ -165,7 +165,7 @@ XML 配置文件主要由以下几个部件组成：
 分析结果
 -------
 
-actions 由一组查询语句组成。比如 `EXPLAIN SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1`。执行分析时，每一条语句运行 1000 次（支持 XML 动态配置更佳）。1 到 1000 表示次数 x，返回查询时间 y。将这 1000 条结果保存成 csv 文件，例如：
+actions 由一组查询语句组成。比如 `EXPLAIN SELECT * FROM users WHERE username = 'username_10000' LIMIT 1`。执行分析时，每一条语句运行 1000 次（支持 XML 动态配置更佳）。1 到 1000 表示次数 x，返回查询时间 y。将这 1000 条结果保存成 csv 文件，例如：
 
 ```csv
 x,y
