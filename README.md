@@ -6,6 +6,8 @@ DBAnalyzer 帮助自动化数据库的基准测试过程，生成具有表现力
 执行过程
 -------
 
+程序的主要过程主要由 3 步组成，读取配置、执行分析、执行成像。以下内容描述了程序的具体执行过程：
+
 1. 读取一个 XML 配置文件（或者支持多行 SQL 文本的文件）--- XML 配置数据表的定义和要分析的语句
 
    > 关于 XML 结构的说明，参看下面
@@ -54,7 +56,7 @@ DBAnalyzer 帮助自动化数据库的基准测试过程，生成具有表现力
    
    ![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
 
-以下是伪代码：
+以下是程序执行的伪代码：
 
 ```nim
 parseXMLFile()
@@ -71,7 +73,7 @@ execChartPlotter()
 XML 配置
 ---------
 
-XML 配置文件主要由以下部分组成：
+XML 配置文件主要由以下几个部件组成：
 
 - rootDir 生成的 csv 文件和 png 文件所保存的目录
 - quality 每一个查询语句执行次数
@@ -147,7 +149,7 @@ XML 配置文件主要由以下部分组成：
 分析结果
 -------
 
-actions 由一组查询语句组成。比如 `EXPLAIN SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1`，每一条语句运行 1000 次（支持 XML 配置更佳）。1 到 1000 表示次数 x，返回查询时间 y。将这 1000 条结果保存成 csv 文件，例如：
+actions 由一组查询语句组成。比如 `EXPLAIN SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1`。执行分析时，每一条语句运行 1000 次（支持 XML 动态配置更佳）。1 到 1000 表示次数 x，返回查询时间 y。将这 1000 条结果保存成 csv 文件，例如：
 
 ```csv
 x,y
