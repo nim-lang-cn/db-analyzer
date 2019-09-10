@@ -79,9 +79,9 @@ parseXMLFile()
 
 prepareSchemas()
 prepareTables()
-analyze(false)
+analyze(indexed = false)
 prepareIndexes()
-analyze(true)
+analyze(indexed = true)
 
 execChartPlotter()
 ```
