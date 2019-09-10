@@ -55,3 +55,5 @@ XML 配置
 - inserts 插入数据表的一组 SQL 语句，并且提供 count 指示插入多少航
 - indexes 创建数据表索引的一组 SQL 语句
 - actions 用于分析的一组查询 SQL 语句，比如 `EXPLAIN ANALYZE SELECT * FROM users WHERE username = 'username100'`
+
+![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
