@@ -24,16 +24,16 @@ DBAnalyzer 帮助自动化你的数据库基准测试过程，为你生成具有
     (schema) sqls/account.sql
     (schema) sqls/qa.sql
     (table)  users 10000 ...
-            inserted rows 1000, cost 375ms 
-            inserted rows 2000, cost 592ms
-            inserted rows 3000, cost 874ms
-            inserted rows 4000, cost 1457ms
-            inserted rows 5000, cost 1698ms
-            inserted rows 6000, cost 1923ms
-            inserted rows 7000, cost 2216ms
-            inserted rows 8000, cost 2840ms
-            inserted rows 9000, cost 3077ms
-            inserted rows 10000, cost 3305ms 
+             inserted rows 1000, cost 375ms 
+             inserted rows 2000, cost 592ms
+             inserted rows 3000, cost 874ms
+             inserted rows 4000, cost 1457ms
+             inserted rows 5000, cost 1698ms
+             inserted rows 6000, cost 1923ms
+             inserted rows 7000, cost 2216ms
+             inserted rows 8000, cost 2840ms
+             inserted rows 9000, cost 3077ms
+             inserted rows 10000, cost 3305ms 
     (action) account.username.username-1 <non-index> ...
     (action) account.username.username-1-limit <non-index> ...
     (action) account.username.username-10000 <non-index> ...
