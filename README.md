@@ -3,10 +3,12 @@ DB Analyzer
 
 DBAnalyzer 帮助自动化数据库的基准测试过程，生成具有表现力的日志和图表。
 
-过程
-----
+执行过程
+-------
 
-1. 提供一个 XML 配置文件（或者支持多行 SQL 文本的文件），配置数据表的定义和分析语句
+1. 读取一个 XML 配置文件（或者支持多行 SQL 文本的文件）--- XML 配置数据表的定义和要分析的语句
+
+   > 关于 XML 结构的说明，参看下面
 
 2. 运行程序，执行分析过程：
 
@@ -49,6 +51,8 @@ DBAnalyzer 帮助自动化数据库的基准测试过程，生成具有表现力
 3. 运行程序，执行成像过程
 
    > 读取 2 生成的 csv 文件，生成 png 图片
+   
+   ![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
 
 以下是伪代码：
 
@@ -67,9 +71,13 @@ execChartPlotter()
 XML 配置
 ---------
 
-- schemas 数据表的 Schema 定义文件，里面定义了 `CREATE TABLE` 脚本
-- inserts 插入数据表的一组 SQL 语句，并且提供 count 指示插入多少航
-- indexes 创建数据表索引的一组 SQL 语句
+XML 配置文件主要由以下部分组成：
+
+- rootDir 生成的 csv 文件和 png 文件所保存的目录
+- quality 每一个查询语句执行次数
+- schemas 表的 Schema 定义文件，里面定义了 `CREATE TABLE` 脚本，用来创建表
+- tables 插入数据的 SQL 语句，并且提供 `count` 指示插入多少行
+- indexes 创建索引的一组 SQL 语句
 - actions 用于分析的一组查询 SQL 语句，比如 `EXPLAIN ANALYZE SELECT * FROM users WHERE username = 'username100'`
 
 以下是一个例子：
@@ -108,7 +116,7 @@ XML 配置
     </index>
   </indexes>
 
-  <task name="username">
+  <actions name="username">
     <action name="username-1" description="Analyze username 1">
       <query>
         SELECT * FROM account.users WHERE username = 'username_1'
@@ -132,7 +140,7 @@ XML 配置
         SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1
       </query>
     </action>
-  </task>
+  </actions>
 </analysis>
 ```
 
@@ -164,5 +172,3 @@ x,y
 ----
 
 使用一个图表软件包，把 csv 文件读取出来，然后转换成一个图片。如果可以的话，把所有的 csv 数据合并打印到一张图上。
-
-![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
