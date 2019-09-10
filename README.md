@@ -58,3 +58,76 @@ XML 配置
 - indexes 创建数据表索引的一组 SQL 语句
 - actions 用于分析的一组查询 SQL 语句，比如 `EXPLAIN ANALYZE SELECT * FROM users WHERE username = 'username100'`
 
+以下是一个例子：
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<activity>
+  <rootDir>analyzes</rootDir>
+  <quality>1000</quality>
+
+  <schemas>
+    <schema>sqls/account.sql</schema>
+    <schema>sqls/qa.sql</schema>
+  </schemas>
+
+  <tables>
+    <table count="100000" name="users" description="insert into users">
+      <args>
+        <arg name="i" type="INTEGER" start="1" interval="1" />
+        <arg name="t" type="TIMESTAMP" start="2019-05-27 03:31" interval="1m" />
+      </args>
+      <query>
+        INSERT INTO users (
+          username, 
+          password, 
+          phone, 
+          created_date
+        ) VALUES ( 
+          concat('username', {i}),
+          concat('password', {i}),
+          concat('phone', {i}),
+          {t}
+        )
+      </query>
+    </table>
+  </tables>
+
+  <indexes>
+    <index>
+      CREATE UNIQUE INDEX index_users_on_username on account.users (username)
+    </index>
+  </indexes>
+
+  <objectives>
+    <objective name="account">
+      <task name="username">
+        <action name="username-1" description="Analyze username 1">
+          <query>
+            SELECT * FROM account.users WHERE username = 'username_1'
+          </query>
+        </action>
+
+        <action name="username-1-limit" description="Analyze username 1 limit 1">
+          <query>
+            SELECT * FROM account.users WHERE username = 'username_1' LIMIT 1
+          </query>
+        </action>
+
+        <action name="username-10000" description="Analyze username 10000">
+          <query>
+            SELECT * FROM account.users WHERE username = 'username_10000'
+          </query>
+        </action>
+
+        <action name="username-10000-limit" description="Analyze username 10000 limit 1">
+          <query>
+            SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1
+          </query>
+        </action>
+      </task>
+    </objective>
+  </objectives>
+</activity>
+```
