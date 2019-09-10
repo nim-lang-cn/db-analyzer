@@ -1,14 +1,14 @@
 DB Analyzer
 ============
 
-DBAnalyzer 帮助自动化你的数据库基准测试过程，为你生成具有表现力的日志和图表。
+DBAnalyzer 帮助自动化数据库的基准测试过程，生成具有表现力的日志和图表。
 
 过程
 ----
 
-1. 提供一个 XML 配置文件，配置数据表格定义和分析语句
+1. 提供一个 XML 配置文件（或者支持多行 SQL 文本的文件），配置数据表的定义和分析语句
 
-2. 运行程序，执行分析：
+2. 运行程序，执行分析过程：
 
    - 连接到数据库，运行 schemas 脚本
    - 执行 inserts 批量插入数据
@@ -46,13 +46,15 @@ DBAnalyzer 帮助自动化你的数据库基准测试过程，为你生成具有
     Completed analysis.
     ```
 
-3. 运行程序，读取 2 生成的 csv 文件，生成 png 图片
+3. 运行程序，执行成像过程
 
-   ![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
-   
+   > 读取 2 生成的 csv 文件，生成 png 图片
+
 以下是伪代码：
 
 ```nim
+parseXMLFile()
+
 prepareSchemas()
 prepareTables()
 analyze(false)
@@ -75,7 +77,7 @@ XML 配置
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
-<activity>
+<analysis>
   <rootDir>analyzes</rootDir>
   <quality>1000</quality>
 
@@ -86,21 +88,15 @@ XML 配置
 
   <tables>
     <table count="100000" name="users" description="insert into users">
-      <args>
-        <arg name="i" type="INTEGER" start="1" interval="1" />
-        <arg name="t" type="TIMESTAMP" start="2019-05-27 03:31" interval="1m" />
-      </args>
       <query>
         INSERT INTO users (
           username, 
           password, 
-          phone, 
-          created_date
+          phone
         ) VALUES ( 
           concat('username', {i}),
           concat('password', {i}),
-          concat('phone', {i}),
-          {t}
+          concat('phone', {i})
         )
       </query>
     </table>
@@ -112,34 +108,61 @@ XML 配置
     </index>
   </indexes>
 
-  <objectives>
-    <objective name="account">
-      <task name="username">
-        <action name="username-1" description="Analyze username 1">
-          <query>
-            SELECT * FROM account.users WHERE username = 'username_1'
-          </query>
-        </action>
+  <task name="username">
+    <action name="username-1" description="Analyze username 1">
+      <query>
+        SELECT * FROM account.users WHERE username = 'username_1'
+      </query>
+    </action>
 
-        <action name="username-1-limit" description="Analyze username 1 limit 1">
-          <query>
-            SELECT * FROM account.users WHERE username = 'username_1' LIMIT 1
-          </query>
-        </action>
+    <action name="username-1-limit" description="Analyze username 1 limit 1">
+      <query>
+        SELECT * FROM account.users WHERE username = 'username_1' LIMIT 1
+      </query>
+    </action>
 
-        <action name="username-10000" description="Analyze username 10000">
-          <query>
-            SELECT * FROM account.users WHERE username = 'username_10000'
-          </query>
-        </action>
+    <action name="username-10000" description="Analyze username 10000">
+      <query>
+        SELECT * FROM account.users WHERE username = 'username_10000'
+      </query>
+    </action>
 
-        <action name="username-10000-limit" description="Analyze username 10000 limit 1">
-          <query>
-            SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1
-          </query>
-        </action>
-      </task>
-    </objective>
-  </objectives>
-</activity>
+    <action name="username-10000-limit" description="Analyze username 10000 limit 1">
+      <query>
+        SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1
+      </query>
+    </action>
+  </task>
+</analysis>
 ```
+
+分析结果
+-------
+
+actions 由一组查询语句组成。比如 `EXPLAIN SELECT * FROM account.users WHERE username = 'username_10000' LIMIT 1`，每一条语句运行 1000 次（支持 XML 配置更佳）。1 到 1000 表示次数 x，返回查询时间 y。将这 1000 条结果保存成 csv 文件，例如：
+
+```csv
+x,y
+1,9.135
+2,8.944
+3,8.922
+4,8.937
+5,10.58
+6,9.72
+7,11.731
+8,9.119
+9,8.946
+10,9.012
+11,8.946
+12,8.96
+13,8.943
+14,8.93
+15,8.95
+```
+
+图表
+----
+
+使用一个图表软件包，把 csv 文件读取出来，然后转换成一个图片。如果可以的话，把所有的 csv 数据合并打印到一张图上。
+
+![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
