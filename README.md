@@ -49,6 +49,18 @@ DBAnalyzer 帮助自动化你的数据库基准测试过程，为你生成具有
 3. 运行程序，读取 2 生成的 csv 文件，生成 png 图片
 
    ![](https://github.com/nim-lang-cn/db-analyzer/blob/master/aggregate.svg)
+   
+以下是伪代码：
+
+```nim
+prepareSchemas()
+prepareTables()
+analyze(false)
+prepareIndexes()
+analyze(true)
+
+execChartPlotter()
+```
 
 XML 配置
 ---------
