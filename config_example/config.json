@@ -1,0 +1,48 @@
+{
+    "analysis": {
+        "rootDir": "analyzes/",
+        "quality": "1000",
+        "schemas": {
+            "schema": [
+                "sqls/account.sql",
+                "sqls/qa.sql"
+            ]
+        },
+        "tables": {
+            "table": {
+                "@count": "10000",
+                "@name": "users",
+                "@description": "insert into users",
+                "query": "INSERT INTO users (\n          username, \n          password, \n          phone\n        ) VALUES ( \n          concat('username', {i}),\n          concat('password', {i}),\n          concat('phone', {i})\n        )"
+            }
+        },
+        "indexes": {
+            "index": "CREATE UNIQUE INDEX index_users_on_username on users (username)"
+        },
+        "actions": {
+            "@name": "username",
+            "action": [
+                {
+                    "@name": "username-1",
+                    "@description": "Analyze username 1",
+                    "query": "SELECT * FROM users WHERE username = 'username1'"
+                },
+                {
+                    "@name": "username-1-limit",
+                    "@description": "Analyze username 1 limit 1",
+                    "query": "SELECT * FROM users WHERE username = 'username1' LIMIT 1"
+                },
+                {
+                    "@name": "username-10000",
+                    "@description": "Analyze username 10000",
+                    "query": "SELECT * FROM users WHERE username = 'username10000'"
+                },
+                {
+                    "@name": "username-10000-limit",
+                    "@description": "Analyze username 10000 limit 1",
+                    "query": "SELECT * FROM users WHERE username = 'username10000' LIMIT 1"
+                }
+            ]
+        }
+    }
+}
