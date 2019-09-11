@@ -1,0 +1,33 @@
+analysis:
+    actions:
+        '@name': username
+        action:
+        -   '@description': Analyze username 1
+            '@name': username-1
+            query: SELECT * FROM users WHERE username = 'username1'
+        -   '@description': Analyze username 1 limit 1
+            '@name': username-1-limit
+            query: SELECT * FROM users WHERE username = 'username1' LIMIT 1
+        -   '@description': Analyze username 10000
+            '@name': username-10000
+            query: SELECT * FROM users WHERE username = 'username10000'
+        -   '@description': Analyze username 10000 limit 1
+            '@name': username-10000-limit
+            query: SELECT * FROM users WHERE username = 'username10000' LIMIT 1
+    indexes:
+        index: CREATE UNIQUE INDEX index_users_on_username on users (username)
+    quality: '1000'
+    rootDir: analyzes/
+    schemas:
+        schema:
+        - sqls/account.sql
+        - sqls/qa.sql
+    tables:
+        table:
+            '@count': '10000'
+            '@description': insert into users
+            '@name': users
+            query: "INSERT INTO users (\n          username, \n          password,\
+                \ \n          phone\n        ) VALUES ( \n          concat('username',\
+                \ {i}),\n          concat('password', {i}),\n          concat('phone',\
+                \ {i})\n        )"

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<analysis>
+  <rootDir>analyzes/</rootDir>
+  <quality>1000</quality>
+
+  <schemas>
+    <schema>sqls/account.sql</schema>
+    <schema>sqls/qa.sql</schema>
+  </schemas>
+
+  <tables>
+    <table count="10000" name="users" description="insert into users">
+      <query>
+        INSERT INTO users (
+          username, 
+          password, 
+          phone
+        ) VALUES ( 
+          concat('username', {i}),
+          concat('password', {i}),
+          concat('phone', {i})
+        )
+      </query>
+    </table>
+  </tables>
+
+  <indexes>
+    <index>
+      CREATE UNIQUE INDEX index_users_on_username on users (username)
+    </index>
+  </indexes>
+
+  <actions name="username">
+    <action name="username-1" description="Analyze username 1">
+      <query>
+        SELECT * FROM users WHERE username = 'username1'
+      </query>
+    </action>
+
+    <action name="username-1-limit" description="Analyze username 1 limit 1">
+      <query>
+        SELECT * FROM users WHERE username = 'username1' LIMIT 1
+      </query>
+    </action>
+
+    <action name="username-10000" description="Analyze username 10000">
+      <query>
+        SELECT * FROM users WHERE username = 'username10000'
+      </query>
+    </action>
+
+    <action name="username-10000-limit" description="Analyze username 10000 limit 1">
+      <query>
+        SELECT * FROM users WHERE username = 'username10000' LIMIT 1
+      </query>
+    </action>
+  </actions>
+</analysis>
