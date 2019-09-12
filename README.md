@@ -210,6 +210,39 @@ execChartPlotter()
 </analysis>
 ```
 
+之后我们将配置文件 “反序列化” 得到 Nim 对象的示例如下：
+
+```ini
+type  
+  Schema = string
+  Index = string
+  RootDir = string
+  Quality = string
+
+  Table = ref object
+    count: string
+    name: string
+    description: string
+    query: string
+
+  Way = ref object
+    name: string
+    description: string
+    query: string
+
+  Action = ref object
+    name: string
+    actions: seq[Way]
+
+  Analysis = ref object
+    rootDir: RootDir
+    quality: Quality
+    schemas: seq[Schema]
+    tables: Table
+    indexes: Index
+    actions: Action
+```
+
 ### 2.2. `<schemas>`
 
 `<schemas>` 由一组 `<schema>` 组成，每个 `<schema>` 表示一个 SQL 脚本文件，可以创建一组数据库表。
