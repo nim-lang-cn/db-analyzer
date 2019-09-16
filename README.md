@@ -214,33 +214,33 @@ execChartPlotter()
 
 ```ini
 type  
-  Schema = string
-  Index = string
-  RootDir = string
-  Quality = string
+  Schema* = string
+  Index* = string
+  RootDir* = string
+  Quality* = string
 
-  Table = ref object
+  Table* = ref object
     count: string
     name: string
     description: string
     query: string
 
-  Way = ref object
+  Way* = ref object
     name: string
     description: string
     query: string
 
-  Action = ref object
+  Action* = ref object
     name: string
     actions: seq[Way]
 
-  Analysis = ref object
-    rootDir: RootDir
-    quality: Quality
-    schemas: seq[Schema]
-    tables: Table
-    indexes: Index
-    actions: Action
+  Analysis* = ref object
+    rootDir*: RootDir
+    quality*: Quality
+    schemas*: seq[Schema]
+    tables*: Table
+    indexes*: seq[Index]
+    actions*: Action
 ```
 
 ### 2.2. `<schemas>`
