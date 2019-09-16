@@ -1,11 +1,11 @@
 import strformat
 
 type  
-  Schema = string
-  Index = string
-  RootDir = string
-  Quality = string
-  Table = ref object
+  Schema* = string
+  Index* = string
+  RootDir* = string
+  Quality* = string
+  Table* = ref object
     count: string         # 数量
     name: string          # 用户
     description: string   # 事件描述
@@ -14,7 +14,7 @@ type
     name: string          # 用户
     description: string   # 事件描述
     query: string         # 请求
-  Action = ref object
+  Action* = ref object
     name: string          # 用户名
     actions: seq[Way]     # 执行的操作
   Analysis* = ref object  # 各节点内容
@@ -22,7 +22,7 @@ type
     quality*: Quality     # 每个查询语句执行次数，比如查询 1000 次
     schemas*: seq[Schema] # 表的 Schema 定义文件，里面定义了 CREATE TABLE 脚本，用来创建表
     tables*: Table        # INSERT SQL 语句组，用于 “批量插入大量数据”。提供 count 指示插入多少行
-    indexes*: Index       # INDEX SQL 语句组，用于 “批量创建索引”
+    indexes*: seq[Index]       # INDEX SQL 语句组，用于 “批量创建索引”
     actions*: Action      # SQL 语句组，用于 “运行查询语句（EXPLAIN）”
 
 proc initTable*(count: string, name: string, 
