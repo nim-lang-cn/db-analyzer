@@ -33,11 +33,22 @@ proc parseConfigJson(filename: string): Analysis =
   let actions = node["actions"]
   let name = actions["@name"]
   let action = actions["action"]
+
+
   var analysis = new Analysis
-  var schema: seq[string] = @[]
+  var 
+    schema: seq[Schema] = @[]
+    idx: seq[Index] = @[]
   analysis.rootDir = rootDir.getStr
   analysis.quality = quality.getStr
-  analysis.indexes = index.getStr
+  for s in index.getElems:
+    idx.add(s.getStr)
+  # 待修复
+  if idx.len != 0:
+    analysis.indexes = idx 
+  else:
+    analysis.indexes = @[index.getStr]
+
   for s in schemas.getElems:
     schema.add(s.getStr)
   analysis.schemas = schema
