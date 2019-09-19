@@ -1,23 +1,32 @@
 import os, streams
-import json #, parseXml, yaml
+import json, parseXml
+
+
 import types
 
-
-proc parseConfigXml(filename: string)
+proc parseConfigXml(filename: string): Analysis 
 proc parseConfigJson(filename: string): Analysis
 proc parseConfigYaml(filename: string)
 
 
+let filename = "test.xml"
+var s = newFileStream(filename, fmRead)
+if s == nil: quit("cannot open the file " & filename)
 
-proc parseAction(xd: var XmlParser) = 
+
+proc parseAction(xd: var XmlParser): Way = 
+  var 
+    name: string
+    description: string
+    query: string
   # name
   xd.next
   if xd.attrkey == "name":
-    echo xd.attrValue
+    name =  xd.attrValue
     # description
     xd.next
   if xd.attrkey == "description":
-    echo xd.attrValue
+    description = xd.attrValue
   # >
     xd.next
   # query
@@ -25,13 +34,14 @@ proc parseAction(xd: var XmlParser) =
   # data
   if xd.elementName == "query":
     xd.next
-    echo xd.charData
+    query = xd.charData
   # query end
     xd.next
   # action end
   xd.next
   # next action
   xd.next
+  result = initWay(name=name, description=description, query=query)
 
 proc parseSchema(xd: var XmlParser): Schema = 
   # data
@@ -60,6 +70,8 @@ proc parseTable(xd: var XmlParser): Table =
   if xd.attrKey == "description":
     description = xd.attrValue
     xd.next
+    xd.next
+  
   if xd.kind == xmlElementStart and xd.elementName == "query":
     xd.next
     query = xd.charData
@@ -79,20 +91,87 @@ proc parseIndex(xd: var XmlParser): Index =
   # next index
   xd.next
 
-
 proc parseConfigureFile(filename: string): Analysis = 
   let (_, _, ext) = splitFile(filename)
   case ext: 
   of ".xml":
-    parseConfigXml(filename)
+    result = parseConfigXml(filename)
   of ".json":
     result = parseConfigJson(filename)
   of ".yaml":
     parseConfigYaml(filename)
 
-proc parseConfigXml(filename: string) = 
-  discard
+proc parseConfigXml(filename: string): Analysis = 
+  var 
+    xmlNode: XmlParser
+    analysis = new Analysis
+
+  open(xmlNode, s, filename)
+
+  while true: 
+    case xmlNode.kind
+    of xmlElementStart: 
+      case xmlNode.elementName:
+      of "rootDir":
+        # get rootDir no attr
+        xmlNode.next
+        analysis.rootDir = xmlNode.charData
+      of "quality":
+        # get quality no attr
+        xmlNode.next
+        analysis.quality = xmlNode.charData
+      of "schemas":
+        var schema: seq[string] = @[]
+        # schema
+        xmlNode.next
+        while xmlNode.elementName == "schema":
+          schema.add(xmlNode.parseSchema)
+        analysis.schemas = schema
   
+      of "indexes":
+        var idx: seq[string] = @[]
+        # index
+        xmlNode.next
+        while xmlNode.elementName == "index":
+          idx.add(xmlNode.parseIndex)
+        analysis.indexes = idx
+      
+      xmlNode.next
+    of xmlElementOpen:
+      while xmlNode.elementName == "table":
+        analysis.tables = parseTable(xmlNode)
+
+
+      if xmlNode.elementName == "actions":
+        var 
+          name: string
+          actionSeq: seq[Way] 
+        # actions attr
+        xmlNode.next
+        name = xmlNode.attrValue
+        # >
+        xmlNode.next
+        # action <
+        xmlNode.next
+        while xmlNode.elementName == "action":
+          actionSeq.add(xmlNode.parseAction)
+        analysis.actions = initAction(name=name, actions=actionSeq)
+          
+      xmlNode.next
+    of xmlElementEnd:
+      xmlNode.next
+    of xmlPI: 
+      xmlNode.next
+    of xmlEOf: 
+      break
+    of xmlError:
+      echo xmlNode.errorMsg
+      xmlNode.next
+    else:
+      xmlNode.next
+  result = analysis
+
+
 proc parseConfigJson(filename: string): Analysis = 
   let s = open(filename, fmRead)
   let jsonNode = parseJson(s.readAll)
@@ -138,5 +217,21 @@ proc parseConfigJson(filename: string): Analysis =
   s.close()
   return analysis
 
+
 proc parseConfigYaml(filename: string) =
   discard
+
+
+when isMainModule:
+  # define analysis
+  let a1 = parseConfigXml(filename="test.xml")
+  let a2 = parseConfigJson(filename="test.json")
+
+
+  echo a1.rootDir == a2.rootDir
+  echo a1.quality == a2.quality
+  echo a1.schemas == a2.schemas
+  # echo "a1: ", a1.schemas, "\na2: ", a2.schemas
+  echo "a1: ", a1.actions
+  echo "a2: ", a2.actions
+  echo "a1: ", a1.tables, "\na2: ", a2.tables
